@@ -338,9 +338,13 @@ main(
           while ( (device = [eDevices nextObject]) ) {
             UInt16      uvcVersion = [device uvcVersion];
             char        versionStr[8];
+              NSString* serialNumber = [device serialNumber];
+              if (!serialNumber) {
+                  serialNumber = @"--";
+              }
             
             snprintf(versionStr, sizeof(versionStr), "%d.%02x", (short)(uvcVersion >> 8), (uvcVersion &0xFF));
-            printf("%-12lu 0x%04x:0x%04x  0x%08x   %-5s        %-12s   %s\n", deviceIndex++, [device vendorId], [device productId], [device locationId], versionStr, [[device serialNumber] cStringUsingEncoding:NSASCIIStringEncoding], [[device deviceName] cStringUsingEncoding:NSASCIIStringEncoding]);
+            printf("%-12lu 0x%04x:0x%04x  0x%08x   %-5s        %-12s   %s\n", deviceIndex++, [device vendorId], [device productId], [device locationId], versionStr, [serialNumber cStringUsingEncoding:NSASCIIStringEncoding], [[device deviceName] cStringUsingEncoding:NSASCIIStringEncoding]);
           }
           printf("------------ -------------- ------------ ------------ -------------- ------------------------------------------------\n");
         } else {

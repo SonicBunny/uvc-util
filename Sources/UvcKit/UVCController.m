@@ -778,7 +778,7 @@ uvc_control_t     UVCControllerControls[] = {
         _deviceName = [[NSString stringWithUTF8String:nameBuffer] retain];
       }
 
-      _serialNumber = @"";      // Default value is blank.  Some devices don't indulge in serial numbers.
+      _serialNumber = nil;      // Default value is nil.  Some devices don't indulge in serial numbers.
       CFMutableDictionaryRef dict = NULL;
       if (IORegistryEntryCreateCFProperties(ioServiceObject, &dict, kCFAllocatorDefault, kNilOptions) == KERN_SUCCESS) {
           CFTypeRef obj = CFDictionaryGetValue(dict, CFSTR(kIOHIDSerialNumberKey));
