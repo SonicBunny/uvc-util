@@ -332,17 +332,17 @@ main(
           UVCController   *device;
           unsigned long   deviceIndex = 0;
           
-          printf("------------ -------------- ------------ ------------ ------------------------------------------------\n");
-          printf("%-12s %-14s %-12s %-12s %s\n", "Index", "Vend:Prod", "LocationID", "UVC Version", "Device name");
-          printf("------------ -------------- ------------ ------------ ------------------------------------------------\n");
+          printf("------------ -------------- ------------ ------------ -------------- ------------------------------------------------\n");
+          printf("%-12s %-14s %-12s %-12s %-14s %s\n", "Index", "Vend:Prod", "LocationID", "UVC Version", "Serial Number", "Device name");
+          printf("------------ -------------- ------------ ------------ -------------- ------------------------------------------------\n");
           while ( (device = [eDevices nextObject]) ) {
             UInt16      uvcVersion = [device uvcVersion];
             char        versionStr[8];
             
             snprintf(versionStr, sizeof(versionStr), "%d.%02x", (short)(uvcVersion >> 8), (uvcVersion &0xFF));
-            printf("%-12lu 0x%04x:0x%04x  0x%08x   %-5s        %s\n", deviceIndex++, [device vendorId], [device productId], [device locationId], versionStr, [[device deviceName] cStringUsingEncoding:NSASCIIStringEncoding]);
+            printf("%-12lu 0x%04x:0x%04x  0x%08x   %-5s        %-12s   %s\n", deviceIndex++, [device vendorId], [device productId], [device locationId], versionStr, [[device serialNumber] cStringUsingEncoding:NSASCIIStringEncoding], [[device deviceName] cStringUsingEncoding:NSASCIIStringEncoding]);
           }
-          printf("------------ -------------- ------------ ------------ ------------------------------------------------\n");
+          printf("------------ -------------- ------------ ------------ -------------- ------------------------------------------------\n");
         } else {
           fprintf(stderr, "ERROR:  no UVC-capable devices available\n");
           rc = ENODEV;

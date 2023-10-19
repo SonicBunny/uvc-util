@@ -12,10 +12,12 @@
 
 #import <Foundation/Foundation.h>
 
+#include <sys/cdefs.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOMessage.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
+#include <IOKit/hidsystem/IOHIDParameter.h>
 
 #import "UVCValue.h"
 
@@ -39,6 +41,7 @@
 @interface UVCController : NSObject
 {
   NSString                      *_deviceName;
+  NSString                      *_serialNumber;
   UInt32                        _locationId;
   UInt16                        _vendorId, _productId;
   
@@ -106,6 +109,13 @@
   Returns the name of the USB device.
 */
 - (NSString*) deviceName;
+
+/*!
+  @method serialNumber
+
+  Returns the serialNumber of the USB device.
+*/
+- (NSString*) serialNumber;
 
 /*!
   @method locationId

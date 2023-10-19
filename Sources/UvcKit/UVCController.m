@@ -777,6 +777,19 @@ uvc_control_t     UVCControllerControls[] = {
       if ( IORegistryEntryGetName(ioServiceObject, nameBuffer) == KERN_SUCCESS ) {
         _deviceName = [[NSString stringWithUTF8String:nameBuffer] retain];
       }
+
+      _serialNumber = @"";      // Default value is blank.  Some devices don't indulge in serial numbers.
+      CFMutableDictionaryRef dict = NULL;
+      if (IORegistryEntryCreateCFProperties(ioServiceObject, &dict, kCFAllocatorDefault, kNilOptions) == KERN_SUCCESS) {
+          CFTypeRef obj = CFDictionaryGetValue(dict, CFSTR(kIOHIDSerialNumberKey));
+          if (!obj) {
+              obj = CFDictionaryGetValue(dict, CFSTR(kUSBSerialNumberString));
+          }
+          if (obj) {
+              _serialNumber = (NSString *)obj;
+          }
+      }
+        
       _unitIds = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                         [NSNumber numberWithInt:UVC_INPUT_TERMINAL_ID], @"UVC_INPUT_TERMINAL_ID",
                         [NSNumber numberWithInt:UVC_PROCESSING_UNIT_ID], @"UVC_PROCESSING_UNIT_ID",
@@ -1243,6 +1256,7 @@ uvc_control_t     UVCControllerControls[] = {
       (*_controllerInterface)->Release(_controllerInterface);
     }
     if ( _deviceName ) [_deviceName release];
+    if ( _serialNumber ) [_serialNumber release];
     [super dealloc];
   }
 
@@ -1250,14 +1264,15 @@ uvc_control_t     UVCControllerControls[] = {
 
   - (NSString*) description
   {
-    return [NSString stringWithFormat:@"UVCController@%p { \"%@\"; vendor-id=0x%04x; product-id=0x%04x; location-id=0x%08x; uvc-version: 0x%04x interface-index: %d%s }",
+    return [NSString stringWithFormat:@"UVCController@%p { \"%@\"; vendor-id=0x%04x; product-id=0x%04x; location-id=0x%08x; uvc-version: 0x%04x interface-index: %d%s; serial-number: \"%@\"}",
                         self,
                         _deviceName,
                         _vendorId, _productId,
                         _locationId,
                         _uvcVersion,
                         _videoInterfaceIndex,
-                        (_isInterfaceOpen ? " ; is-open" : "")
+                        (_isInterfaceOpen ? " ; is-open" : ""),
+                        _serialNumber
                       ];
   }
 
@@ -1270,6 +1285,12 @@ uvc_control_t     UVCControllerControls[] = {
 
 //
 
+- (NSString*) serialNumber
+{
+  return _serialNumber;
+}
+
+//
   - (UInt32) locationId
   {
     return _locationId;
